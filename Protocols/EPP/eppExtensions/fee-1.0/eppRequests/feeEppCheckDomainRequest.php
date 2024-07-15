@@ -45,15 +45,30 @@ class feeEppCheckDomainRequest extends eppCheckDomainRequest {
         $check = $this->createElement('fee:check');
         $check->setAttribute('xmlns:fee','urn:ietf:params:xml:ns:fee-1.0');
         $check->appendChild($this->createElement('fee:currency',$currency));
-        $command = $this->createElement('fee:command',$command);
+        $cmd = $this->createElement('fee:command');
+        $cmd->setAttribute('name', $command);
         if ($period) {
             $per = $this->createElement('fee:period',$period);
             $per->setAttribute('unit','y');
-            $command->appendChild($per);
+            $cmd->appendChild($per);
+            $check->appendChild($cmd);
         }
         if ($phase) {
-            $command->setAttribute('phase',$phase);
+            $cmd->setAttribute('phase',$phase);
         }
+
+//        $renewCmd = $this->createElement('fee:command');
+//        $renewCmd->setAttribute('name', 'renew');
+//
+//        $transferCmd = $this->createElement('fee:command');
+//        $transferCmd->setAttribute('name', 'transfer');
+//
+//        $restoreCmd = $this->createElement('fee:command');
+//        $restoreCmd->setAttribute('name', 'restore');
+//
+//        $check->appendChild($renewCmd);
+//        $check->appendChild($transferCmd);
+//        $check->appendChild($restoreCmd);
         $this->getExtension()->appendChild($check);
         $this->addSessionId();
     }

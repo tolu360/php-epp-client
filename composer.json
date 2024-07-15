@@ -17,7 +17,7 @@
         "ext-libxml": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7"
+        "phpunit/phpunit": "^7|^11.0.1"
     },
     "autoload": {
         "classmap" : [ "Protocols/", "Registries/" ]

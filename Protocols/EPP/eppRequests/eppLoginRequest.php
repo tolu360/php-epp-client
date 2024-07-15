@@ -107,11 +107,19 @@ class eppLoginRequest extends eppRequest {
             foreach ($services as $service => $extra) {
                 $svcs->appendChild($this->createElement('objURI', $service));
             }
+//            $svcs->appendChild($this->createElement('objURI', 'urn:ietf:params:xml:ns:fee-1.0'));
+
             if ((is_array($extensions)) && (count($extensions) > 0)) {
                 $svcextension = $this->createElement('svcExtension');
                 foreach ($extensions as $extension => $extra) {
                     $svcextension->appendChild($this->createElement('extURI', $extension));
                 }
+//                $svcextension->appendChild($this->createElement('extURI', 'http://rxsd.domain-registry.nl/sidn-ext-epp-registry-contacts-delete-1.0'));
+//                $svcextension->appendChild($this->createElement('extURI', 'http://rxsd.domain-registry.nl/sidn-ext-epp-scheduled-delete-1.0'));
+//                $svcextension->appendChild($this->createElement('extURI', 'urn:ietf:params:xml:ns:keyrelay-1.0'));
+//                $svcextension->appendChild($this->createElement('extURI', 'urn:ietf:params:xml:ns:fee-1.0'));
+
+
                 $svcs->appendChild($svcextension);
             }
             $this->login->appendChild($svcs);

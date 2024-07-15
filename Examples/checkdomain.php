@@ -31,7 +31,24 @@ try {
     // userid=xxxxxxxx
     // password=xxxxxxxxx
     // Please enter the location of the file with these settings in the string location here under
-    if ($conn = eppConnection::create('')) {
+//    if ($conn = eppConnection::create('../settings.ini')) {
+//        $conn->useExtension('fee-1.0');
+//        // Connect and login to the EPP server
+//        if ($conn->login()) {
+//            // Check domain names
+//            checkdomains($conn, $domains);
+//            $conn->logout();
+//        }
+//    }
+    if ($conn = new \Metaregistrar\EPP\sidnEppConnection(true)) {
+        $conn->setHostname('ssl://registry.ola.cv'); // Hostname may vary depending on the registry selected
+        $conn->setPort(700); // Port may vary depending on the registry selected
+        $conn->setUsername('apitestregistrar');
+        $conn->setPassword('Testing321?tolu');
+//        $conn->setAllowSelfSigned(false);
+        $conn->setVerifyPeer(false);
+        $conn->setVerifyPeerName(false);
+        $conn->useExtension('fee-1.0');
         // Connect and login to the EPP server
         if ($conn->login()) {
             // Check domain names
@@ -49,18 +66,25 @@ try {
  */
 function checkdomains($conn, $domains) {
     // Create request to be sent to EPP service
-    $check = new eppCheckDomainRequest($domains);
+//    $check = new eppCheckDomainRequest($domains);
+    $check = new \Metaregistrar\EPP\feeEppCheckDomainRequest($domains, false);
+    $check->addFee('create', 'USD', 1);
+//        $check->addFee('renew');
     // Write request to EPP service, read and check the results
     if ($response = $conn->request($check)) {
-        /* @var $response eppCheckDomainResponse */
+        /* @var $response \Metaregistrar\EPP\feeEppCheckdomainResponse */
         // Walk through the results
         $checks = $response->getCheckedDomains();
         foreach ($checks as $check) {
-            echo $check['domainname'] . " is " . ($check['available'] ? 'free' : 'taken');
+            echo $check['domainname'] . " is " . ($check['available'] ? 'available' : 'taken');
             if ($check['available']) {
                 echo ' (' . $check['reason'] .')';
             }
             echo "\n";
         }
+
+//        echo "Fees:\n";
+//        echo "\n";
+//        echo $response->getFees();
     }
 }

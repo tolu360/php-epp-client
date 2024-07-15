@@ -67,6 +67,8 @@ class eppCheckRequest extends eppRequest {
         #
         $check = $this->createElement('check');
         $this->contactobject = $this->createElement('contact:check');
+        $this->contactobject->setAttribute('xmlns:host', 'urn:ietf:params:xml:ns:contact-1.0');
+
         foreach ($contacthandles as $contacthandle) {
             if ($contacthandle instanceof eppContactHandle) {
                 $this->contactobject->appendChild($this->createElement('contact:id', $contacthandle->getContactHandle()));
@@ -84,6 +86,7 @@ class eppCheckRequest extends eppRequest {
         #
         $check = $this->createElement('check');
         $this->hostobject = $this->createElement('host:check');
+        $this->hostobject->setAttribute('xmlns:host', 'urn:ietf:params:xml:ns:host-1.0');
         foreach ($hosts as $host) {
             if ($host instanceof eppHost) {
                 if (strlen($host->getHostname()) > 0) {

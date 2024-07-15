@@ -223,7 +223,7 @@ class eppConnection {
         $this->version = '1.0';
         // Default server configuration stuff - this varies per connected registry
         // Check the greeting of the server to see which of these values you need to add
-        $this->setTimeout(10);
+        $this->setTimeout(60);
         $this->setLanguage($this->language);
         $this->setVersion($this->version);
         $this->responses['Metaregistrar\\EPP\\eppHelloRequest'] = 'Metaregistrar\\EPP\\eppHelloResponse';
@@ -231,6 +231,7 @@ class eppConnection {
         $this->responses['Metaregistrar\\EPP\\eppLogoutRequest'] = 'Metaregistrar\\EPP\\eppLogoutResponse';
         $this->responses['Metaregistrar\\EPP\\eppPollRequest'] = 'Metaregistrar\\EPP\\eppPollResponse';
         $this->responses['Metaregistrar\\EPP\\eppCheckDomainRequest'] = 'Metaregistrar\\EPP\\eppCheckDomainResponse';
+//        $this->responses['Metaregistrar\\EPP\\feeEppCheckDomainRequest'] = 'Metaregistrar\\EPP\\feeEppCheckDomainResponse';
         $this->responses['Metaregistrar\\EPP\\eppCheckContactRequest'] = 'Metaregistrar\\EPP\\eppCheckContactResponse';
         $this->responses['Metaregistrar\\EPP\\eppCheckHostRequest'] = 'Metaregistrar\\EPP\\eppCheckHostResponse';
         $this->responses['Metaregistrar\\EPP\\eppInfoHostRequest'] = 'Metaregistrar\\EPP\\eppInfoHostResponse';
@@ -397,6 +398,9 @@ class eppConnection {
                 return false;
             }
         }
+//        $hello = new eppHelloRequest();
+//        $this->request($hello);
+
         $login = new eppLoginRequest(null,$usecdata);
         if ($response = $this->request($login)) {
             $this->writeLog("Logged in","LOGIN");
@@ -818,6 +822,7 @@ class eppConnection {
             $content->addLanguage($this->getLanguage());
             // Add services and extensions to this content
             $content->addServices($this->getServices(), $this->getExtensions());
+
         }
         /*
          * $content->hello is only set if this is an instance or a sub-instance of an eppHelloRequest

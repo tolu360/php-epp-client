@@ -65,7 +65,7 @@ class eppRequest extends \DOMDocument {
         $this->sessionid = uniqid();
         parent::__construct('1.0', 'UTF-8');
         $this->formatOutput = true;
-        //$this->standalone = false;
+        $this->standalone = false;
         #$this->validateOnParse = true;
     }
 
@@ -198,7 +198,7 @@ class eppRequest extends \DOMDocument {
         if (is_array($namespaces)) {
             foreach ($namespaces as $namespace => $xmlns) {
                 if (strpos($namespace,'urn')!==false) {
-                    $this->getEpp()->setAttribute('xmlns:' . $xmlns, $namespace);
+//                    $this->getEpp()->setAttribute('xmlns:' . $xmlns, $namespace);
                 } else {
                     if ($this->rootNamespaces()) {
                         $this->getEpp()->setAttribute('xmlns:' . $xmlns, $namespace);

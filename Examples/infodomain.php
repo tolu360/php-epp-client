@@ -24,7 +24,7 @@ $domainname = $argv[1];
 echo "Retrieving info on " . $domainname . "\n";
 try {
     // Please enter your own settings file here under before using this example
-    if ($conn = eppConnection::create()) {
+    if ($conn = eppConnection::create('../settings.ini')) {
         // Connect to the EPP server
         if ($conn->login()) {
             $result = infodomain($conn, $domainname);
@@ -41,7 +41,10 @@ try {
  * @return string
  */
 function infodomain($conn, $domainname) {
-    $info = new eppInfoDomainRequest(new eppDomain($domainname));
+    $domain = new eppDomain($domainname);
+    $domain->setAuthorisationCode('rand0m');
+
+    $info = new eppInfoDomainRequest($domain, eppInfoDomainRequest::HOSTS_ALL, false);
     if ($response = $conn->request($info)) {
         /* @var $response Metaregistrar\EPP\eppInfoDomainResponse */
         $d = $response->getDomain();

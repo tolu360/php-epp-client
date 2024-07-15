@@ -34,17 +34,18 @@ $domainname = $argv[1];
 echo "Registering $domainname\n";
 try {
 // Please enter your own settings file here under before using this example
-    if ($conn = eppConnection::create('')) {
+    if ($conn = eppConnection::create('../settings.ini')) {
 // Connect to the EPP server
         if ($conn->login()) {
-            if (!checkhosts($conn, array('ns1.metaregistrar.nl'))) {
-                createhost($conn, 'ns1.metaregistrar.nl');
+            if (!checkhosts($conn, array('rob.ns.cloudflare.com'))) {
+                createhost($conn, 'rob.ns.cloudflare.com');
             }
-            if (!checkhosts($conn, array('ns2.metaregistrar.nl'))) {
-                createhost($conn, 'ns2.metaregistrar.nl');
+            if (!checkhosts($conn, array('dawn.ns.cloudflare.com'))) {
+                createhost($conn, 'dawn.ns.cloudflare.com');
             }
-            $nameservers = array('ns1.metaregistrar.nl','ns2.metaregistrar.nl');
-            $contactid = createcontact($conn,'test@test.com','+31.61234567890','Person name',null,'Address 1','12345','City','NL');
+            $nameservers = array('rob.ns.cloudflare.com','dawn.ns.cloudflare.com');
+            $contactid = createcontact($conn,'test@tolu.dev','+2348030000000','Tolu',null,'25 Milverton Rd','223101','Lagos','NG');
+            echo "contactID: $contactid\n";
             if ($contactid) {
                 createdomain($conn, $domainname, $contactid, $contactid, $contactid, $contactid, $nameservers);
             }
@@ -59,6 +60,7 @@ function checkcontact($conn, $contactid) {
     /* @var $conn Metaregistrar\EPP\eppConnection */
     try {
         $check = new eppCheckRequest(new eppContactHandle($contactid));
+        $check->setNamespacesinroot(false);
         if ($response = $conn->request($check)) {
             /* @var $response Metaregistrar\EPP\eppCheckResponse */
             $checks = $response->getCheckedContacts();
@@ -77,7 +79,8 @@ function createcontact($conn, $email, $telephone, $name, $organization, $address
     try {
         $contactinfo = new eppContact(new eppContactPostalInfo($name, $city, $country, $organization, $address, null, $postcode, Metaregistrar\EPP\eppContact::TYPE_LOC), $email, $telephone);
         $contactinfo->setPassword('fubar');
-        $contact = new eppCreateContactRequest($contactinfo);
+        $contact = new eppCreateContactRequest($contactinfo, false);
+        $contact->setNamespacesinroot(false);
         if ($response = $conn->request($contact)) {
             /* @var $response Metaregistrar\EPP\eppCreateContactResponse */
             echo "Contact created on " . $response->getContactCreateDate() . " with id " . $response->getContactId() . "\n";
@@ -102,6 +105,7 @@ function checkhosts($conn, $hosts) {
             $checkhost[] = new eppHost($host);
         }
         $check = new eppCheckRequest($checkhost);
+        $check->setNamespacesinroot(false);
         if ($response = $conn->request($check)) {
             /* @var $response Metaregistrar\EPP\eppCheckResponse */
             $checks = $response->getCheckedHosts();
@@ -128,7 +132,8 @@ function checkhosts($conn, $hosts) {
 function createhost($conn, $hostname, $ipaddress=null) {
 
     try {
-        $create = new eppCreateHostRequest(new eppHost($hostname,$ipaddress));
+        $create = new eppCreateHostRequest(new eppHost($hostname,$ipaddress), false);
+        $create->setNamespacesinroot(false);
         if ($response = $conn->request($create)) {
             /* @var $response Metaregistrar\EPP\eppCreateHostResponse */
             echo "Host created on " . $response->getHostCreateDate() . " with name " . $response->getHostName() . "\n";
@@ -162,7 +167,8 @@ function createdomain($conn, $domainname, $registrant, $admincontact, $techconta
                 $domain->addHost(new eppHost($nameserver));
             }
         }
-        $create = new eppCreateDomainRequest($domain);
+        $create = new eppCreateDomainRequest($domain, false, false);
+        $create->setNamespacesinroot(false);
         if ($response = $conn->request($create)) {
             /* @var $response Metaregistrar\EPP\eppCreateDomainResponse */
             echo "Domain " . $response->getDomainName() . " created on " . $response->getDomainCreateDate() . ", expiration date is " . $response->getDomainExpirationDate() . "\n";
