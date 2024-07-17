@@ -120,12 +120,22 @@ class feeEppCheckdomainResponse extends eppCheckDomainResponse {
             $result = [];
 
             foreach ($details as $fees) {
-                $feeDetails = ['domain' => '', 'class' => '', 'request' => '', 'period' => '', 'description' => '', 'fee' => 0.00, 'available' => 1];
+                $feeDetails = [
+                    'domain' => '',
+                    'class' => '',
+                    'create' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'renew' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'transfer' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'restore' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'update' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'delete' => ['period' => '', 'unit' => '', 'description' => '', 'fee' => ''],
+                    'available' => 1
+                ];
 
                 $feeDetails['available'] = (int) $fees->getAttribute('avail');
 
                 foreach ($fees->childNodes as $feeNode) {
-                    if ($feeNode instanceof DOMElement) {
+                    if ($feeNode instanceof \DOMElement) {
                         if ($feeNode->localName == 'objID') {
                             $feeDetails['domain'] = $feeNode->nodeValue;
                         }
@@ -135,21 +145,20 @@ class feeEppCheckdomainResponse extends eppCheckDomainResponse {
                         }
 
                         if ($feeNode->localName == 'command') {
-                            $feeDetails['request'] = $feeNode->getAttribute('name');
-
                             foreach ($feeNode->childNodes as $commandNode) {
-                                if ($commandNode instanceof DOMElement) {
+                                if ($commandNode instanceof \DOMElement) {
                                     if ($commandNode->localName == 'period') {
-                                        $feeDetails['period'] = $commandNode->nodeValue . $commandNode->getAttribute('unit');
+                                        $feeDetails[$feeNode->getAttribute('name')]['period'] = (int) $commandNode->nodeValue;
+                                        $feeDetails[$feeNode->getAttribute('name')]['unit'] = $commandNode->getAttribute('unit');
                                     }
 
                                     if ($commandNode->localName == 'fee') {
-                                        $feeDetails['fee'] = (float)$commandNode->nodeValue;
-                                        $feeDetails['description'] = $commandNode->getAttribute('description');
+                                        $feeDetails[$feeNode->getAttribute('name')]['fee'] = (float)$commandNode->nodeValue;
+                                        $feeDetails[$feeNode->getAttribute('name')]['description'] = $commandNode->getAttribute('description');
                                     }
 
                                     if ($commandNode->localName == 'reason') {
-                                        $feeDetails['reason'] = $commandNode->nodeValue;
+                                        $feeDetails[$feeNode->getAttribute('name')]['reason'] = $commandNode->nodeValue;
                                     }
                                 }
                             }
@@ -157,7 +166,8 @@ class feeEppCheckdomainResponse extends eppCheckDomainResponse {
                     }
                 }
 
-                $result[] = $feeDetails;
+                $result[] = array_filter(array_map(fn($value) => is_array($value) ? array_filter($value) : $value, $feeDetails));
+
             }
 
             return $result;
