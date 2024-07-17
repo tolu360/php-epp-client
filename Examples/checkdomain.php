@@ -50,7 +50,7 @@ try {
         $conn->setVerifyPeerName(false);
         $conn->useExtension('fee-1.0');
         // Connect and login to the EPP server
-        if ($conn->login()) {
+        if ($conn->login(true)) {
             // Check domain names
             checkdomains($conn, $domains);
             $conn->logout();
