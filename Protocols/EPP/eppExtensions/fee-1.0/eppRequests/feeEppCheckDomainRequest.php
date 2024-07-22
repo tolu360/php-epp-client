@@ -43,7 +43,7 @@ class feeEppCheckDomainRequest extends eppCheckDomainRequest {
             throw new eppException('Command must be create, delete, renew, update, transfer, restore, or custom on addFee command');
         }
         $check = $this->createElement('fee:check');
-        $check->setAttribute('xmlns:fee','urn:ietf:params:xml:ns:fee-1.0');
+        $check->setAttribute('xmlns:fee','urn:ietf:params:xml:ns:epp:fee-1.0');
         $check->appendChild($this->createElement('fee:currency',$currency));
         $cmd = $this->createElement('fee:command');
         $cmd->setAttribute('name', $command);
