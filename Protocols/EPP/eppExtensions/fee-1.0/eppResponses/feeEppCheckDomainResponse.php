@@ -166,7 +166,7 @@ class feeEppCheckdomainResponse extends eppCheckDomainResponse {
                     }
                 }
 
-                $result[] = array_filter(array_map(fn($value) => is_array($value) ? array_filter($value) : $value, $feeDetails));
+                $result[] = array_filter(array_map(fn($value) => is_array($value) ? array_filter($value, fn($value) => is_numeric($value) || !empty($value)) : $value, $feeDetails));
 
             }
 
