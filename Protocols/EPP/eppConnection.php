@@ -867,7 +867,7 @@ class eppConnection {
                         throw new eppException("Client transaction id $requestsessionid does not match returned $clienttransid",0,null,null,$xml);
                     }
                     $response->setXpath($this->getServices());
-                    $response->setXpath($this->getExtensions());
+                    $response->setXpath([...$this->getExtensions(), "urn:ietf:params:xml:ns:epp:fee-1.0" => "fee"]);
                     $response->setXpath($this->getXpathExtensions());
                     if ($response instanceof eppHelloResponse) {
                         /* @var $response eppHelloResponse */
