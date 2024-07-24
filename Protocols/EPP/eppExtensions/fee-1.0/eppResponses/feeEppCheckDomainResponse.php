@@ -152,8 +152,8 @@ class feeEppCheckdomainResponse extends eppCheckDomainResponse {
                                         $feeDetails[$feeNode->getAttribute('name')]['unit'] = $commandNode->getAttribute('unit');
                                     }
 
-                                    if ($commandNode->localName == 'fee') {
-                                        $feeDetails[$feeNode->getAttribute('name')]['fee'] = (float)$commandNode->nodeValue;
+                                    if ($commandNode->localName == 'fee' && (empty($feeDetails[$feeNode->getAttribute('name')]['fee']) || $feeDetails[$feeNode->getAttribute('name')]['fee'] < (float) $commandNode->nodeValue)) {
+                                        $feeDetails[$feeNode->getAttribute('name')]['fee'] = (float) $commandNode->nodeValue;
                                         $feeDetails[$feeNode->getAttribute('name')]['description'] = $commandNode->getAttribute('description');
                                     }
 
