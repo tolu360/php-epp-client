@@ -18,7 +18,7 @@ class feeEppCreateDomainRequest extends eppCreateDomainRequest
         $create->setAttribute('xmlns:fee','urn:ietf:params:xml:ns:epp:fee-1.0');
         $create->appendChild($this->createElement('fee:currency', $currency));
         $create->appendChild($this->createElement('fee:fee', $fee));
-        $create->appendChild($this->createElement('fee:credit', -$fee));
+//        $create->appendChild($this->createElement('fee:credit', -$fee));
 
         $this->getExtension()->appendChild($create);
         $this->addSessionId();
