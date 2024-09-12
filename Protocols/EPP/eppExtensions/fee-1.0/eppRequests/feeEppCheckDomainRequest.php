@@ -38,37 +38,59 @@ class feeEppCheckDomainRequest extends eppCheckDomainRequest {
 
     }
 
-    public function addFee($command, $currency = 'USD', $period = null, $phase=null) {
-        if (!in_array($command,['renew','transfer','restore','create','delete','update','custom'])) {
-            throw new eppException('Command must be create, delete, renew, update, transfer, restore, or custom on addFee command');
+    public function addFee($command, $currency = 'USD', $period = null) {
+        if (!in_array($command, ['renew','transfer','restore','create','delete','update','custom', 'all'])) {
+            throw new eppException('Command must be create, delete, renew, update, transfer, restore, custom or all on addFee command');
         }
+
         $check = $this->createElement('fee:check');
         $check->setAttribute('xmlns:fee','urn:ietf:params:xml:ns:epp:fee-1.0');
         $check->appendChild($this->createElement('fee:currency',$currency));
-        $cmd = $this->createElement('fee:command');
-        $cmd->setAttribute('name', $command);
-        if ($period) {
-            $per = $this->createElement('fee:period',$period);
-            $per->setAttribute('unit','y');
-            $cmd->appendChild($per);
-            $check->appendChild($cmd);
-        }
-        if ($phase) {
-            $cmd->setAttribute('phase',$phase);
+
+        if (in_array($command, ['create', 'all', 'renew', 'transfer', 'restore'])) {
+            $registrationCmd = $this->createElement('fee:command');
+            $registrationCmd->setAttribute('name', 'create');
+
+            $registrationPeriod = $this->createElement('fee:period', $period ?? 1);
+            $registrationPeriod->setAttribute('unit','y');
+            $registrationCmd->appendChild($registrationPeriod);
+
+            $check->appendChild($registrationCmd);
         }
 
-//        $renewCmd = $this->createElement('fee:command');
-//        $renewCmd->setAttribute('name', 'renew');
-//
-//        $transferCmd = $this->createElement('fee:command');
-//        $transferCmd->setAttribute('name', 'transfer');
-//
-//        $restoreCmd = $this->createElement('fee:command');
-//        $restoreCmd->setAttribute('name', 'restore');
-//
-//        $check->appendChild($renewCmd);
-//        $check->appendChild($transferCmd);
-//        $check->appendChild($restoreCmd);
+        if (in_array($command, ['renew', 'all'])) {
+            $renewCmd = $this->createElement('fee:command');
+            $renewCmd->setAttribute('name', 'renew');
+
+            $renewPeriod = $this->createElement('fee:period', 1);
+            $renewPeriod->setAttribute('unit','y');
+            $renewCmd->appendChild($renewPeriod);
+
+            $check->appendChild($renewCmd);
+        }
+
+        if (in_array($command, ['transfer', 'all'])) {
+            $transferCmd = $this->createElement('fee:command');
+            $transferCmd->setAttribute('name', 'transfer');
+
+            $transferPeriod = $this->createElement('fee:period', 1);
+            $transferPeriod->setAttribute('unit','y');
+            $transferCmd->appendChild($transferPeriod);
+
+            $check->appendChild($transferCmd);
+        }
+
+        if (in_array($command, ['restore', 'all'])) {
+            $restoreCmd = $this->createElement('fee:command');
+            $restoreCmd->setAttribute('name', 'restore');
+
+            $restorePeriod = $this->createElement('fee:period', $period ?? 1);
+            $restorePeriod->setAttribute('unit','y');
+            $restoreCmd->appendChild($restorePeriod);
+
+            $check->appendChild($restoreCmd);
+        }
+
         $this->getExtension()->appendChild($check);
         $this->addSessionId();
     }
