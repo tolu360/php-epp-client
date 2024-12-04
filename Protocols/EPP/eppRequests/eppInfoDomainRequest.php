@@ -11,6 +11,7 @@ class eppInfoDomainRequest extends eppDomainRequest {
     const HOSTS_SUBORDINATE = 'sub';
     const HOSTS_NONE = 'none';
 
+    protected $useRoID = false;
 
     /**
      * eppInfoDomainRequest constructor.
@@ -18,7 +19,7 @@ class eppInfoDomainRequest extends eppDomainRequest {
      * @param null $hosts
      * @throws eppException
      */
-    public function __construct($infodomain, $hosts = null, $namespacesinroot = true, $usecdata = true) {
+    public function __construct($infodomain, $hosts = null, $namespacesinroot = true, $usecdata = true, $useRoID = false) {
         $this->setNamespacesinroot($namespacesinroot);
         parent::__construct(eppRequest::TYPE_INFO);
         $this->setUseCdata($usecdata);
@@ -28,6 +29,7 @@ class eppInfoDomainRequest extends eppDomainRequest {
             throw new eppException('parameter of infodomainrequest needs to be eppDomain object');
         }
         $this->addSessionId();
+        $this->useRoID = $useRoID;
     }
 
     function __destruct() {
@@ -53,10 +55,18 @@ class eppInfoDomainRequest extends eppDomainRequest {
         if (!is_null($domain->getAuthorisationCode())) {
             $authinfo = $this->createElement('domain:authInfo');
             if ($this->useCdata()) {
-                $pw = $authinfo->appendChild($this->createElement('domain:pw'));
+                $domainPw = $this->createElement('domain:pw');
+                if ($this->useRoID && $domain->getRoID()) {
+                    $domainPw->setAttribute('roid', $domain->getRoID());
+                }
+                $pw = $authinfo->appendChild($domainPw);
                 $pw->appendChild($this->createCDATASection($domain->getAuthorisationCode()));
             } else {
-                $authinfo->appendChild($this->createElement('domain:pw', $domain->getAuthorisationCode()));
+                $domainPw = $this->createElement('domain:pw', $domain->getAuthorisationCode());
+                if ($this->useRoID && $domain->getRoID()) {
+                    $domainPw->setAttribute('roid', $domain->getRoID());
+                }
+                $authinfo->appendChild($domainPw);
             }
             $this->domainobject->appendChild($authinfo);
         }

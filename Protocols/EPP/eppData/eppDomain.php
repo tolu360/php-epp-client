@@ -76,10 +76,16 @@ class eppDomain {
 
     /**
      *
+     * @var string|null
+     */
+    private $roID = null;
+
+    /**
+     *
      * @param eppContactHandle|string $registrant
      * @param string $authorisationCode
      */
-    public function __construct($domainname, $registrant = null, $contacts = null, $hosts = null, $period = 0, $authorisationCode = null) {
+    public function __construct($domainname, $registrant = null, $contacts = null, $hosts = null, $period = 0, $authorisationCode = null, $roID = null) {
 
         if (strlen($domainname)) {
             $this->setDomainname($domainname);
@@ -123,6 +129,9 @@ class eppDomain {
                     $this->addContact($contacts);
                 }
             }
+        }
+        if ($roID) {
+            $this->setRoID($roID);
         }
     }
 
@@ -384,5 +393,22 @@ class eppDomain {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    /**
+     *
+     * @param string $roID
+     * @return void
+     */
+    public function setRoID($roID) {
+        $this->roID = $roID;
+    }
+
+    /**
+     *
+     * @return string|null
+     */
+    public function getRoID() {
+        return $this->roID;
     }
 }
