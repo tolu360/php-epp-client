@@ -21,6 +21,7 @@ class eppInfoDomainRequest extends eppDomainRequest {
      */
     public function __construct($infodomain, $hosts = null, $namespacesinroot = true, $usecdata = true, $useRoID = false) {
         $this->setNamespacesinroot($namespacesinroot);
+        $this->useRoID = $useRoID;
         parent::__construct(eppRequest::TYPE_INFO);
         $this->setUseCdata($usecdata);
         if ($infodomain instanceof eppDomain) {
@@ -29,7 +30,6 @@ class eppInfoDomainRequest extends eppDomainRequest {
             throw new eppException('parameter of infodomainrequest needs to be eppDomain object');
         }
         $this->addSessionId();
-        $this->useRoID = $useRoID;
     }
 
     function __destruct() {
